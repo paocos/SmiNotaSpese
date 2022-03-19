@@ -262,19 +262,19 @@ public class MainActivity extends AppCompatActivity
             gpsConnector = new GPSConnector(this ,  getApplicationContext());
         }
 
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-  //          if (!gpsIntentFrg.isLocationEnabled()) {
-    //            showGPSSetting();
-      //      } else {
-        //        getApplicationContext().startForegroundService(gpsIntentFrg);
-          //  }
-      //  } else {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+           if (!gpsIntentFrg.isLocationEnabled()) {
+                showGPSSetting();
+           } else {
+                getApplicationContext().startForegroundService(gpsIntentFrg);
+           }
+        } else {
             if (!gpsConnector.isLocationEnabled()) {
                 showGPSSetting();
             } else {
                 gpsConnector.start();
             }
-      //  }
+        }
     }
 
     private void showGPSSetting() {
