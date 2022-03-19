@@ -1,0 +1,43 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- A 'parent' preference, which enables/disables child preferences (below)
+         when checked/unchecked. -->
+    <SwitchPreference
+        android:defaultValue="@string/pref_gps_active_dft"
+        android:key="gpsActive"
+        android:title="@string/pref_gps_active" />
+
+    <EditTextPreference
+        android:defaultValue="@string/pref_gps_ping_dft"
+        android:inputType="number"
+        android:dialogMessage="@string/pref_gps_ping_dlg"
+        android:key="gpsPInc"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:dependency="gpsActive"
+        android:title="@string/pref_gps_pinc" />
+
+    <EditTextPreference
+        android:defaultValue="@string/pref_gps_interval_dft"
+        android:inputType="number"
+        android:dialogMessage="@string/pref_gps_interval_dlg"
+        android:key="gpsInterval"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:dependency="gpsActive"
+        android:title="@string/pref_gps_interval" />
+
+    <EditTextPreference
+        android:defaultValue="@string/pref_gps_precision_dft"
+        android:inputType="number"
+        android:dialogMessage="@string/pref_gps_precision_dlg"
+        android:key="gpsPrecision"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:dependency="gpsActive"
+        android:title="@string/pref_gps_precision" />
+
+</PreferenceScreen>

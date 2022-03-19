@@ -1,0 +1,36 @@
+imgProvider no
+imgLocalSave no
+imgRemoteSave no
+
+lbl_kmh no
+btnRectxt_kmh no
+txt_alti no
+
+progressBar_cyclic no
+
+txt_km_work unico
+txt_time_work unico
+txt_vmax_work no
+txt_vmedia_work unico
+
+txt_km_mine no
+txt_time_mine no
+txt_vmax_mine no
+txt_vmedia_mine no
+
+txt_km_all no
+txt_time_all no
+txt_vmax_all no
+txt_vmedia_all no
+
+
+
+
+
+
+txt_address si
+
+btnWorkPers si
+
+txt_temp si
+txt_hum si

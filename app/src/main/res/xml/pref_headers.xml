@@ -1,0 +1,30 @@
+<preference-headers xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- These settings headers are only used on tablets. -->
+
+    <header
+        android:fragment="com.paocos.sminotaspese.SettingsActivity$GeneralPreferenceFragment"
+        android:icon="@drawable/ic_info_black_24dp"
+        android:title="@string/pref_header_general" />
+
+    <header
+        android:fragment="com.paocos.sminotaspese.SettingsActivity$GpsPreferenceFragment"
+        android:icon="@drawable/ic_gps"
+        android:title="@string/pref_header_gps" />
+
+    <header
+        android:fragment="com.paocos.sminotaspese.SettingsActivity$TempPreferenceFragment"
+        android:icon="@drawable/ic_temp"
+        android:title="@string/pref_header_temp" />
+
+    <header
+        android:fragment="com.paocos.sminotaspese.SettingsActivity$LunchPreferenceFragment"
+        android:icon="@drawable/ic_add_lunch"
+        android:title="@string/pref_header_lunch" />
+
+    <header
+        android:fragment="com.paocos.sminotaspese.SettingsActivity$DataSyncPreferenceFragment"
+        android:icon="@drawable/ic_sync_black_24dp"
+        android:title="@string/pref_header_data_sync" />
+
+</preference-headers>

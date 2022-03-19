@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3f51b5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#ff4081</color>
+    <color name="gpsback">#8484CF</color>
+    <color name="tempcold">#aa22ff</color>
+    <color name="tempwarm">#FF0000</color>
+    <color name="orariback">#00ff00</color>
+    <color name="pranzoback">#c0c0c0</color>
+    <color name="colorBlack">#000000</color>
+    <color name="riepback">#d3d3d3</color>
+</resources>

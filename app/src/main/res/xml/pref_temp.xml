@@ -1,0 +1,21 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- A 'parent' preference, which enables/disables child preferences (below)
+         when checked/unchecked. -->
+    <SwitchPreference
+        android:defaultValue="@string/pref_temp_active_dft"
+        android:key="tempActive"
+        android:title="@string/pref_temp_active" />
+
+    <EditTextPreference
+        android:defaultValue="@string/pref_gps_ping_dft"
+        android:inputType="number"
+        android:dialogMessage="@string/pref_temp_soglia_dlg"
+        android:key="tempSoglia"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:dependency="tempActive"
+        android:title="@string/pref_temp_soglia" />
+
+</PreferenceScreen>

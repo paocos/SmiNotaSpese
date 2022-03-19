@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent" android:layout_height="wrap_content"
+    android:padding="0dp"
+    >
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/oraricv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardBackgroundColor="@color/orariback"
+        app:cardCornerRadius="5dp"
+        app:cardUseCompatPadding="true">
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/orarirellay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            tools:layout_width="match_parent">
+
+            <ImageView
+                android:id="@+id/orarioback"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:contentDescription="@string/background_orario"
+                android:src="@drawable/orario"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+            <TableLayout
+                android:id="@+id/oraritable"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignEnd="@+id/orarioback"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:id="@+id/orario_empty"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="3dip"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorBlack" />
+
+                    <TextView
+                        android:id="@+id/orario_lbl_da"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="3dip"
+                        android:text="@string/da"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorBlack" />
+
+                    <TextView
+                        android:id="@+id/orario_lbl_a"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="3dip"
+                        android:text="@string/a"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorBlack" />
+
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:id="@+id/orario_lbl_mattino"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="3dip"
+                        android:text="@string/mattino"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorBlack" />
+
+                    <TextView
+                        android:id="@+id/orario_txt_mattino_da"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="3dip"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorBlack"
+                        android:textSize="@dimen/orario_size"
+                        tools:text="08:30" />
+
+                    <TextView
+                        android:id="@+id/orario_txt_mattino_a"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="3dip"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorBlack"
+                        android:textSize="@dimen/orario_size"
+                        tools:text="12:30" />
+
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+
+                    <TextView
+                        android:id="@+id/orario_lbl_pomeriggio"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="3dip"
+                        android:text="@string/pomeriggio"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorBlack" />
+
+                    <TextView
+                        android:id="@+id/orario_txt_pomeriggio_da"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="3dip"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorBlack"
+                        android:textSize="@dimen/orario_size"
+                        tools:text="14:00" />
+
+                    <TextView
+                        android:id="@+id/orario_txt_pomeriggio_a"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="3dip"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorBlack"
+                        android:textSize="@dimen/orario_size"
+                        tools:text="18:00" />
+
+                </TableRow>
+
+            </TableLayout>
+
+        </android.support.constraint.ConstraintLayout>
+
+    </android.support.v7.widget.CardView>
+
+</LinearLayout>

@@ -1,0 +1,15 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- A 'parent' preference, which enables/disables child preferences (below)
+         when checked/unchecked. -->
+    <EditTextPreference
+        android:defaultValue="@string/pref_lunch_quota_dft"
+        android:inputType="number"
+        android:dialogMessage="@string/pref_lunch_quota_dlg"
+        android:key="lunchQuota"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="@string/pref_lunch_quota" />
+
+</PreferenceScreen>

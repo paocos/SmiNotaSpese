@@ -1,0 +1,43 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <EditTextPreference
+        android:dialogMessage="@string/pref_general_server_ip_dlg"
+        android:defaultValue="@string/pref_general_server_ip_dft"
+        android:inputType="text"
+        android:key="serverIp"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="@string/pref_general_server_ip" />
+
+    <EditTextPreference
+        android:defaultValue="@string/pref_general_server_port_dft"
+        android:inputType="number"
+        android:dialogMessage="@string/pref_general_server_port_dlg"
+        android:key="serverPort"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="@string/pref_general_server_port" />
+
+    <EditTextPreference
+        android:dialogMessage="@string/pref_general_server_path_dlg"
+        android:defaultValue="@string/pref_general_server_path_dft"
+        android:inputType="text"
+        android:key="serverPath"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="@string/pref_general_server_path" />
+
+    <EditTextPreference
+        android:dialogMessage="@string/pref_general_cod_dip_dlg"
+        android:defaultValue="@string/pref_general_cod_dip_dft"
+        android:inputType="text"
+        android:key="codDip"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="@string/pref_general_cod_dip" />
+
+</PreferenceScreen>
