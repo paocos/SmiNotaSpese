@@ -1,27 +1,29 @@
-/**
- * http://www.androidhive.info/2012/07/android-gps-location-manager-tutorial/
- */
 package com.paocos.sminotaspese.connector;
 
-import android.Manifest;
-import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Binder;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
-
-import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
+
+import com.paocos.sminotaspese.MainActivity;
+import com.paocos.sminotaspese.R;
 import com.paocos.sminotaspese.model.entities.GpsPoint;
 import com.paocos.sminotaspese.model.entities.MyLocation;
 
@@ -29,9 +31,11 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
-public class GPSConnector extends Service implements LocationListener {
+public class GPSConnectorFrg extends Service implements LocationListener {
 
-    private static final String TAG = "GPSConnector";
+    private static final String TAG = GPSConnectorFrg.class.getSimpleName();
+    public static final String CHANNEL_ID = "GPSConnectorFrgChannel";
+
     private LocationManager mLocationManager = null;
     private static final int LOCATION_INTERVAL = 1000 * 1 * 1;
     private static final float LOCATION_DISTANCE = 0;
@@ -44,8 +48,6 @@ public class GPSConnector extends Service implements LocationListener {
     private static final float MIN_ACCURACY = 50;
     private final int MY_PERMISSION_LOCATION = 1;
     private MyLocation oldLocation;
-    private Activity activity;
-    private Context context;
     private int counter_for_geocoder;
     private Geocoder geocoder;
     private Address actAddress;
@@ -68,11 +70,18 @@ public class GPSConnector extends Service implements LocationListener {
 
     private Boolean isNetworkConnected;
 
-    public GPSConnector(Activity activity , Context context) {
+    private final IBinder mBinder = new LocalBinder();
+
+    public GPSConnectorFrg() {
+    }
+
+//    public GPSConnectorFrg(Activity activity , Context context) {
+    private void initializeGPS() {
+
         Log.e(TAG, "new Connector");
         try {
-            this.context = context;
-            this.activity = activity;
+//            this.context = context;
+//            this.activity = activity;
             initializeLocationManager();
 
             sumLatitude=0;
@@ -91,7 +100,60 @@ public class GPSConnector extends Service implements LocationListener {
 
         }
     }
+ //   }
 
+    /**
+     * new START
+     */
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        initializeGPS();
+        String input = intent.getStringExtra("inputExtra");
+        createNotificationChannel();
+        Intent notificationIntent = new Intent(this, MainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this,
+                0, notificationIntent, 0);
+        Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
+                .setContentTitle("GPS Location Provider")
+                .setContentText(input)
+                .setSmallIcon(R.drawable.ic_gps)
+                .setContentIntent(pendingIntent)
+                .build();
+        startForeground(1, notification);
+
+        //do heavy work on a background thread
+        //stopSelf();
+        return START_NOT_STICKY;
+    }
+
+    private void createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel serviceChannel = new NotificationChannel(
+                    CHANNEL_ID,
+                    "Foreground Service Channel",
+                    NotificationManager.IMPORTANCE_DEFAULT
+            );
+            NotificationManager manager = getSystemService(NotificationManager.class);
+            manager.createNotificationChannel(serviceChannel);
+        }
+    }
+
+    /**
+     * Class used for the client Binder.  Since this service runs in the same process as its
+     * clients, we don't need to deal with IPC.
+     */
+    public class LocalBinder extends Binder {
+        public GPSConnectorFrg getService() {
+            return GPSConnectorFrg.this;
+        }
+    }
+    /**
+     * new END
+     */
+
+
+
+/*
     public void start() {
         Log.e(TAG, "start Connector");
         try {
@@ -117,6 +179,7 @@ public class GPSConnector extends Service implements LocationListener {
     private void stopListener() {
         mLocationManager.removeUpdates(this);
     }
+*/
 
     private Address getGeocoderAddress(Location location) {
         if (!isNetworkConnected) {
@@ -138,9 +201,9 @@ public class GPSConnector extends Service implements LocationListener {
     private void initializeLocationManager() {
         Log.e(TAG, "initializeLocationManager - LOCATION_INTERVAL: " + LOCATION_INTERVAL + " LOCATION_DISTANCE: " + LOCATION_DISTANCE);
         if (mLocationManager == null) {
-            mLocationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+            mLocationManager = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
         }
-        geocoder = new Geocoder(context , Locale.getDefault());
+        geocoder = new Geocoder(getApplicationContext() , Locale.getDefault());
     }
 
     @Override
@@ -185,7 +248,7 @@ public class GPSConnector extends Service implements LocationListener {
     @Override
     public IBinder onBind(Intent intent) {
         Log.e(TAG, "onBind: " + intent);
-        return null;
+        return mBinder;
     }
 
     public boolean isLocationEnabled() {
@@ -340,7 +403,7 @@ public class GPSConnector extends Service implements LocationListener {
             }
 //            Toast.makeText(context, "Distanza:" + newLocation.getDistance() +"\nTempo:" + newLocation.getMyTime() + "\nVelocità:" + newLocation.getMySpeed() , Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
-            Toast.makeText(context, "Errore:" + e.getMessage() , Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Errore:" + e.getMessage() , Toast.LENGTH_SHORT).show();
         }
 
         Log.d(TAG, "Velocità : " + velocity);
@@ -352,13 +415,13 @@ public class GPSConnector extends Service implements LocationListener {
         double radius = EARTH_RADIUS_EQUATOR + (EARTH_RADIUS_POLE - EARTH_RADIUS_EQUATOR) * (oldLocation.getMyLatitude() + newLocation.getMyLatitude()) / Math.PI;
         radius = 6372.795477598;
         double temp = Math.acos(
-                                Math.sin(getRadiant(oldLocation.getMyLatitude())) *
-                Math.sin(getRadiant(newLocation.getMyLatitude()))
-                                        +
-                                        Math.cos(getRadiant(oldLocation.getMyLatitude())) *
-                Math.cos(getRadiant(newLocation.getMyLatitude())) *
-                                                Math.cos(getRadiant(newLocation.getMyLongitude()) -
-                getRadiant(oldLocation.getMyLongitude()))) * radius;
+                Math.sin(getRadiant(oldLocation.getMyLatitude())) *
+                        Math.sin(getRadiant(newLocation.getMyLatitude()))
+                        +
+                        Math.cos(getRadiant(oldLocation.getMyLatitude())) *
+                                Math.cos(getRadiant(newLocation.getMyLatitude())) *
+                                Math.cos(getRadiant(newLocation.getMyLongitude()) -
+                                        getRadiant(oldLocation.getMyLongitude()))) * radius;
         Log.d(TAG, "Distanza : " + temp);
         if (((Double) temp).isNaN()) {
             temp =0;

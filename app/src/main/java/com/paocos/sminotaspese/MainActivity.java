@@ -2,9 +2,11 @@ package com.paocos.sminotaspese;
 
 import android.app.AlertDialog;
 import android.app.NotificationManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
@@ -12,25 +14,28 @@ import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.NavigationView;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.navigation.NavigationView;
+
+import androidx.core.content.ContextCompat;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
 import com.paocos.sminotaspese.adapter.RVAdapter;
 import com.paocos.sminotaspese.connector.GPSConnector;
-import com.paocos.sminotaspese.connector.GpsConnectorFrg;
+import com.paocos.sminotaspese.connector.GPSConnectorFrg;
 import com.paocos.sminotaspese.data.DataLogDataProvider;
 import com.paocos.sminotaspese.manager.ServerSync;
 import com.paocos.sminotaspese.model.entities.CardAll;
@@ -127,6 +132,43 @@ public class MainActivity extends AppCompatActivity
 
     private static final String TAG = "MainActivity";
 
+    private boolean isGPSFrgConnected = false;
+
+    /**
+     * new START
+     */
+
+    GPSConnectorFrg srvGPSFrg;
+    protected ServiceConnection mServiceConn = new ServiceConnection() {
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            GPSConnectorFrg.LocalBinder binder = (GPSConnectorFrg.LocalBinder) service;
+            srvGPSFrg = binder.getService();
+            isGPSFrgConnected = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            srvGPSFrg = null;
+            isGPSFrgConnected = false;
+        }
+    };
+
+    public void startGPSService() {
+        Intent serviceIntent = new Intent(this, GPSConnectorFrg.class);
+        serviceIntent.putExtra("inputExtra", "Reperimento Posizione per SmiNotaSpese");
+        ContextCompat.startForegroundService(this, serviceIntent);
+        bindService(serviceIntent,mServiceConn, Context.BIND_AUTO_CREATE);
+    }
+    public void stopGPSService() {
+        Intent serviceIntent = new Intent(this, GPSConnectorFrg.class);
+        stopService(serviceIntent);
+        unbindService(mServiceConn);
+    }
+    /**
+     * new END
+     */
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -185,6 +227,34 @@ public class MainActivity extends AppCompatActivity
             isFirstTime = false;
         }
 
+        startTimers();
+
+
+//            ConstantUtil.setPowerStatus(this);
+//            ConstantUtil.setAppRunning(true);
+//
+//            // timer aggiornamento video
+//            videoHandler = new Handler();
+//            videoHandler.removeCallbacks(videoTimer);
+//            videoHandler.postDelayed(videoTimer, TIMER_VIDEO_INTERVAL);
+//
+//            if (prfIsGpsActive) {
+//                // timer aggiornamento gps
+//                gpsHandler = new Handler();
+//                gpsHandler.removeCallbacks(gpsTimer);
+//                gpsHandler.postDelayed(gpsTimer, prfgpsInterval);
+//                // timer aggiornamento salvataggio locale
+//                localSaveHandler = new Handler();
+//                localSaveHandler.removeCallbacks(localSaveTimer);
+//                localSaveHandler.postDelayed(localSaveTimer, TIMER_LOCAL_SAVE_INTERVAL);
+//                // timer aggiornamento salvataggio remoto
+//                remoteSaveHandler = new Handler();
+//                remoteSaveHandler.removeCallbacks(remoteSaveTimer);
+//                remoteSaveHandler.postDelayed(remoteSaveTimer, prfRemoteSaveMillesc);
+//            }
+    }
+
+    private void startTimers() {
         ConstantUtil.setPowerStatus(this);
         ConstantUtil.setAppRunning(true);
 
@@ -194,6 +264,13 @@ public class MainActivity extends AppCompatActivity
         videoHandler.postDelayed(videoTimer, TIMER_VIDEO_INTERVAL);
 
         if (prfIsGpsActive) {
+            startGPSTimer();
+        }
+
+    }
+
+    private void startGPSTimer() {
+        if (isFrgService() && isGPSFrgConnected || !isFrgService()) {
             // timer aggiornamento gps
             gpsHandler = new Handler();
             gpsHandler.removeCallbacks(gpsTimer);
@@ -207,7 +284,6 @@ public class MainActivity extends AppCompatActivity
             remoteSaveHandler.removeCallbacks(remoteSaveTimer);
             remoteSaveHandler.postDelayed(remoteSaveTimer, prfRemoteSaveMillesc);
         }
-
     }
 
     @Override
@@ -256,18 +332,18 @@ public class MainActivity extends AppCompatActivity
 
     private void startGPS() {
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            gpsIntentFrg = new Intent(this, GpsConnectorFrg.class);
+        if (isFrgService()) {
+            startGPSService();
         } else {
             gpsConnector = new GPSConnector(this ,  getApplicationContext());
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-           if (!gpsIntentFrg.isLocationEnabled()) {
-                showGPSSetting();
-           } else {
-                getApplicationContext().startForegroundService(gpsIntentFrg);
-           }
+        if (isFrgService()) {
+//           if (!srvGPSFrg.isLocationEnabled()) {
+//                showGPSSetting();
+//           } else {
+//                getApplicationContext().startForegroundService(gpsIntentFrg);
+//           }
         } else {
             if (!gpsConnector.isLocationEnabled()) {
                 showGPSSetting();
@@ -509,6 +585,7 @@ public class MainActivity extends AppCompatActivity
         View myView = findViewById(R.id.content_main);
         myView.setKeepScreenOn(false);
         setClosePending(true);
+        stopGPSService();
     }
 
     @Override
@@ -785,6 +862,12 @@ public class MainActivity extends AppCompatActivity
                     closeActions();
                 }
             }
+
+            // se gps è da far partire ma ancora non partito
+            if (prfIsGpsActive && gpsHandler == null) {
+                startGPSTimer();
+            }
+
         }
     };
 
@@ -798,7 +881,7 @@ public class MainActivity extends AppCompatActivity
 
     private void closeActions() {
         if (gpsConnector != null) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            if (isFrgService()) {
                 stopService(gpsIntentFrg);
             } else {
                 gpsConnector.stop();
@@ -873,13 +956,23 @@ public class MainActivity extends AppCompatActivity
 
                 setGpsReading(true);
 
-                myLocation = gpsConnector.getMyLocation(isNetworkConnected);
+                if (isFrgService()) {
+                    myLocation = srvGPSFrg.getMyLocation(isNetworkConnected);
+                } else {
+                    myLocation = gpsConnector.getMyLocation(isNetworkConnected);
+                }
 
                 if (myLocation != null) {
 
-                    if (gpsConnector.getGpsPoint() != null) {
+                    if (isFrgService()) {
+                        if (srvGPSFrg.getGpsPoint() != null) {
+                            srvGPSFrg.setGpsPoint(null);
+                        }
+                    } else {
+                        if (gpsConnector.getGpsPoint() != null) {
 //                        gpsPoints.add(gpsConnector.getGpsPoint());
-                        gpsConnector.setGpsPoint(null);
+                            gpsConnector.setGpsPoint(null);
+                        }
                     }
 
                     // sommo campi
@@ -960,6 +1053,10 @@ public class MainActivity extends AppCompatActivity
 
     public void setLocalSaving_lunch(boolean localSaving_lunch) {
         this.localSaving_lunch = localSaving_lunch;
+    }
+
+    private boolean isFrgService() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O;
     }
 
 }

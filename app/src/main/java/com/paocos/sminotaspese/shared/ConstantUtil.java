@@ -7,7 +7,7 @@ import android.content.IntentFilter;
 import android.media.AudioManager;
 import android.media.ToneGenerator;
 import android.os.BatteryManager;
-import android.support.v4.app.NotificationCompat;
+import androidx.core.app.NotificationCompat;
 import android.widget.Toast;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
